@@ -8,6 +8,7 @@ import { Button } from '../../shared';
 import { MoveInfoProps } from '../../shared/types';
 import { MovesProps, EntryProps } from './types';
 import { pickRandomIndex } from '../../../helpers';
+import {useKeyhandler} from "../../../helpers/useKeyhandler";
 
 interface MovesComponentProps {
     moves?: MovesProps[];
@@ -76,12 +77,7 @@ const Moves = ({ moves }: MovesComponentProps) => {
         [moves],
     );
 
-    useEffect(() => {
-        document.addEventListener('keydown', onKeyDownHandler);
-        return () => {
-            document.removeEventListener('keydown', onKeyDownHandler);
-        };
-    }, [onKeyDownHandler]);
+    useKeyhandler('keydown', onKeyDownHandler);
 
     return (
         <Container>

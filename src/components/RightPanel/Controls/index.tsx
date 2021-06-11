@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '../../shared';
 import { ChangePokemonIndex } from '../../shared/types';
+import {useKeyhandler} from "../../../helpers/useKeyhandler";
 
 interface ControlsProps {
     pokemonIndex: number;
@@ -70,12 +71,7 @@ const Controls = ({ pokemonIndex, changePokemonIndex }: ControlsProps) => {
         [handleButton, pokemonIndex],
     );
 
-    useEffect(() => {
-        document.addEventListener('keydown', onKeyDownHandler);
-        return () => {
-            document.removeEventListener('keydown', onKeyDownHandler);
-        };
-    }, [onKeyDownHandler]);
+    useKeyhandler('keydown', onKeyDownHandler);
 
     return (
         <Container error={error}>

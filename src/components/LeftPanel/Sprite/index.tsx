@@ -5,6 +5,7 @@ import Container, { ShinyButton } from './styles';
 import { Button } from '../../shared';
 import { PokeBall } from '../../shared';
 import { SpritesProps, SpriteProps } from './types';
+import {useKeyhandler} from "../../../helpers/useKeyhandler";
 
 interface SpriteComponentProps {
     sprites?: SpritesProps;
@@ -84,12 +85,8 @@ const Sprite = ({ sprites, name }: SpriteComponentProps) => {
         [handleChange],
     );
 
-    useEffect(() => {
-        document.addEventListener('keydown', onKeyDownHandler);
-        return () => {
-            document.removeEventListener('keydown', onKeyDownHandler);
-        };
-    }, [onKeyDownHandler]);
+    //
+    useKeyhandler('keydown', onKeyDownHandler);
 
     return (
         <Container error={error}>
