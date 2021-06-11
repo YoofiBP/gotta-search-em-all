@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faVenus, faUndo } from '@fortawesome/free-solid-svg-icons';
 import Container, { ShinyButton } from './styles';
@@ -39,21 +39,24 @@ const Sprite = ({ sprites, name }: SpriteComponentProps) => {
         return direction + light + gender;
     }
 
-    const handleChange = (attribute: string) => {
-        // make a copy and update its state
-        const spriteCopy = { ...sprite, [attribute]: !sprite[attribute] };
-        const source = buildImage(spriteCopy);
+    const handleChange = useCallback(
+        (attribute: string) => {
+            // make a copy and update its state
+            const spriteCopy = { ...sprite, [attribute]: !sprite[attribute] };
+            const source = buildImage(spriteCopy);
 
-        // run the bounce animiation if there is no avaliable sprite
-        if (sprites && !sprites[source]) {
-            setError(true);
-            return setTimeout(() => {
-                setError(false);
-            }, 500);
-        }
+            // run the bounce animiation if there is no avaliable sprite
+            if (sprites && !sprites[source]) {
+                setError(true);
+                return setTimeout(() => {
+                    setError(false);
+                }, 500);
+            }
 
-        return setSprite({ ...sprite, [attribute]: !sprite[attribute] });
-    };
+            return setSprite({ ...sprite, [attribute]: !sprite[attribute] });
+        },
+        [sprite, sprites],
+    );
 
     const renderScreen = () => {
         if (src) {
@@ -62,6 +65,31 @@ const Sprite = ({ sprites, name }: SpriteComponentProps) => {
 
         return <PokeBall nameClass="bigScreen" />;
     };
+
+    const onKeyDownHandler = useCallback(
+        (event) => {
+            if (event.ctrlKey && event.keyCode === 83) {
+                event.preventDefault();
+                handleChange('shiny');
+            }
+            if (event.ctrlKey && event.keyCode === 71) {
+                event.preventDefault();
+                handleChange('female');
+            }
+            if (event.ctrlKey && event.keyCode === 66) {
+                event.preventDefault();
+                handleChange('front');
+            }
+        },
+        [handleChange],
+    );
+
+    useEffect(() => {
+        document.addEventListener('keydown', onKeyDownHandler);
+        return () => {
+            document.removeEventListener('keydown', onKeyDownHandler);
+        };
+    }, [onKeyDownHandler]);
 
     return (
         <Container error={error}>

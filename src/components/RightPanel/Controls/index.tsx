@@ -1,4 +1,4 @@
-import React, { useState, KeyboardEvent } from 'react';
+import React, { useState, KeyboardEvent, useCallback, useEffect } from 'react';
 import Container from './styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown } from '@fortawesome/free-solid-svg-icons';
@@ -28,15 +28,18 @@ const Controls = ({ pokemonIndex, changePokemonIndex }: ControlsProps) => {
         return false;
     };
 
-    const handleButton = (newIndex: number) => {
-        const isError = checkError(newIndex);
-        if (isError) {
-            return;
-        }
+    const handleButton = useCallback(
+        (newIndex: number) => {
+            const isError = checkError(newIndex);
+            if (isError) {
+                return;
+            }
 
-        setIndex(newIndex);
-        changePokemonIndex(newIndex);
-    };
+            setIndex(newIndex);
+            changePokemonIndex(newIndex);
+        },
+        [changePokemonIndex],
+    );
 
     const handleInputChange = (newIndex: string) => {
         const numberIndex = Number(newIndex);
@@ -54,6 +57,25 @@ const Controls = ({ pokemonIndex, changePokemonIndex }: ControlsProps) => {
             changePokemonIndex(index);
         }
     };
+
+    const onKeyDownHandler = useCallback(
+        (event) => {
+            if (event.keyCode === 40) {
+                handleButton(pokemonIndex - 1);
+            }
+            if (event.keyCode === 38) {
+                handleButton(pokemonIndex + 1);
+            }
+        },
+        [handleButton, pokemonIndex],
+    );
+
+    useEffect(() => {
+        document.addEventListener('keydown', onKeyDownHandler);
+        return () => {
+            document.removeEventListener('keydown', onKeyDownHandler);
+        };
+    }, [onKeyDownHandler]);
 
     return (
         <Container error={error}>

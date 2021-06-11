@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRandom } from '@fortawesome/free-solid-svg-icons';
 import Container from './styles';
@@ -65,6 +65,23 @@ const Moves = ({ moves }: MovesComponentProps) => {
             moveDescription,
         });
     }
+
+    const onKeyDownHandler = useCallback(
+        (event) => {
+            if (event.ctrlKey && event.keyCode === 82) {
+                event.preventDefault();
+                fetchMove(moves);
+            }
+        },
+        [moves],
+    );
+
+    useEffect(() => {
+        document.addEventListener('keydown', onKeyDownHandler);
+        return () => {
+            document.removeEventListener('keydown', onKeyDownHandler);
+        };
+    }, [onKeyDownHandler]);
 
     return (
         <Container>
